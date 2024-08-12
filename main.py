@@ -8,12 +8,17 @@ bot_random = BotRandom()
 bot_random2 = BotRandom()
 
 from bot_abstract import BotAbstract
+import winsound
+import time
 def Jugar(bot1: BotAbstract, bot2: BotAbstract):
     puntaje_bot1 = 0
     puntaje_bot2 = 0
     jugada_previa_bot1 = None
     jugada_previa_bot2 = None
     
+    print("Jugada #", bot1.Nombre, bot2.Nombre, "Ptos. ", "Ptos. ", sep='\t|\t')
+    print("-" * 80)
+
     for i in range(20):
         jugada_bot1 = bot1.Jugar(i, jugada_previa_bot2) 
         jugada_bot2 = bot2.Jugar(i, jugada_previa_bot1) 
@@ -27,12 +32,24 @@ def Jugar(bot1: BotAbstract, bot2: BotAbstract):
         puntaje_bot1 += puntos_bot1
         puntaje_bot2 += puntos_bot2 
 
-        print (i , jugada_bot1, jugada_bot2, puntaje_bot1, puntaje_bot2, sep='\t')
+        # Que suene una nota musical diferente en cada jugada
+        frequency = 261.63 * (2 ** (i / 12))
+        winsound.Beep(int(frequency), 100)     
+
+        # Imprime el resultado de la jugada
+        print(str(i + 1) + '\t', jugada_bot1, jugada_bot2, puntos_bot1, puntos_bot2, sep='\t|\t')
+        
+        # Espera 0.2 segundos antes de la siguiente jugada
+        time.sleep(0.2)
+    
     return puntaje_bot1, puntaje_bot2
 
 
 
 puntaje_bot_bueno, puntaje_bot_random = Jugar(bot_random2, bot_random)
 
+
+# imprime el resultado de la partida
+print("")
 print("Puntaje del BotBueno:", puntaje_bot_bueno)
 print("Puntaje del BotRandom:", puntaje_bot_random)
