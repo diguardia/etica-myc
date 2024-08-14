@@ -1,21 +1,21 @@
 from arbitro import Arbitro
 from bot_bueno import BotBueno
 from bot_random import BotRandom
-
+from bot_abstract import BotAbstract
+import winsound
+import time
 
 bot_bueno = BotBueno()
 bot_random = BotRandom()
 bot_random2 = BotRandom()
 
-from bot_abstract import BotAbstract
-import winsound
-import time
 def Jugar(bot1: BotAbstract, bot2: BotAbstract):
     puntaje_bot1 = 0
     puntaje_bot2 = 0
     jugada_previa_bot1 = None
     jugada_previa_bot2 = None
     
+    # Imprime el encabezado de la tabla
     print("Jugada #", bot1.Nombre, bot2.Nombre, "Ptos. ", "Ptos. ", sep='\t|\t')
     print("-" * 80)
 
@@ -41,15 +41,15 @@ def Jugar(bot1: BotAbstract, bot2: BotAbstract):
         
         # Espera 0.2 segundos antes de la siguiente jugada
         time.sleep(0.2)
-    
+
+    print("")
+    print(bot1.Nombre + ": " + str(puntaje_bot1)) 
+    print(bot2.Nombre + ": " + str(puntaje_bot2))
+
     return puntaje_bot1, puntaje_bot2
 
 
 
-puntaje_bot_bueno, puntaje_bot_random = Jugar(bot_random2, bot_random)
+puntaje_bot_bueno, puntaje_bot_random = Jugar(bot_bueno, bot_random)
 
 
-# imprime el resultado de la partida
-print("")
-print("Puntaje del BotBueno:", puntaje_bot_bueno)
-print("Puntaje del BotRandom:", puntaje_bot_random)
