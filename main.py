@@ -1,55 +1,31 @@
-from arbitro import Arbitro
+import time
+from arena import Arena
 from bot_bueno import BotBueno
 from bot_random import BotRandom
-from bot_abstract import BotAbstract
-import winsound
-import time
-
-bot_bueno = BotBueno()
-bot_random = BotRandom()
-bot_random2 = BotRandom()
-
-def Jugar(bot1: BotAbstract, bot2: BotAbstract):
-    puntaje_bot1 = 0
-    puntaje_bot2 = 0
-    jugada_previa_bot1 = None
-    jugada_previa_bot2 = None
-    
-    # Imprime el encabezado de la tabla
-    print("Jugada #", bot1.Nombre, bot2.Nombre, "Ptos. ", "Ptos. ", sep='\t|\t')
-    print("-" * 80)
-
-    for i in range(20):
-        jugada_bot1 = bot1.Jugar(i, jugada_previa_bot2) 
-        jugada_bot2 = bot2.Jugar(i, jugada_previa_bot1) 
-
-        jugada_previa_bot1 = jugada_bot1
-        jugada_previa_bot2 = jugada_bot2
-
-        
-        puntos_bot1, puntos_bot2 = Arbitro.calcular_puntaje_jugada(jugada_bot1, jugada_bot2)
-
-        puntaje_bot1 += puntos_bot1
-        puntaje_bot2 += puntos_bot2 
-
-        # Que suene una nota musical diferente en cada jugada
-        frequency = 261.63 * (2 ** (i / 12))
-        winsound.Beep(int(frequency), 100)     
-
-        # Imprime el resultado de la jugada
-        print(str(i + 1) + '\t', jugada_bot1, jugada_bot2, puntos_bot1, puntos_bot2, sep='\t|\t')
-        
-        # Espera 0.2 segundos antes de la siguiente jugada
-        time.sleep(0.2)
-
-    print("")
-    print(bot1.Nombre + ": " + str(puntaje_bot1)) 
-    print(bot2.Nombre + ": " + str(puntaje_bot2))
-
-    return puntaje_bot1, puntaje_bot2
+from fixture import Fixture
 
 
+bots = [BotBueno(), BotRandom(), BotRandom()]
+fixture = Fixture(bots)
+partidos = fixture.get_fixture()
 
-puntaje_bot_bueno, puntaje_bot_random = Jugar(bot_bueno, bot_random)
+tabla_posiciones = {}
+for bot in bots:
+    tabla_posiciones[bot] = 0
 
+numeroDePartido = 1
+for bot1, bot2 in partidos:
+    print("\nPartido", numeroDePartido)
+    print("Combate entre ", bot1.Nombre, bot2.Nombre)
+    time.sleep(2)
+
+    puntaje_bot1, puntaje_bot2 = Arena.Jugar(bot1, bot2)
+    tabla_posiciones[bot1] += puntaje_bot1
+    tabla_posiciones[bot2] += puntaje_bot2
+
+
+    print("\n\nTabla de Posiciones:")
+    sorted_posiciones = sorted(tabla_posiciones.items(), key=lambda x: x[1], reverse=True)
+    for bot, puntos in sorted_posiciones:
+        print(bot.Nombre, puntos, sep="\t|\t")
 
