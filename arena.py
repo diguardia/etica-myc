@@ -1,3 +1,4 @@
+import sys
 from arbitro import Arbitro
 from bot_abstract import BotAbstract
 import winsound
@@ -13,7 +14,8 @@ class Arena:
         jugada_previa_bot2 = None
         
         # Imprime el encabezado de la tabla
-        print("Jugada #", bot1.Nombre, bot2.Nombre, "Ptos. ", "Ptos. ", sep='\t|\t')
+        
+        print("Jugada #", bot1.Nombre[:6], bot2.Nombre[:6], sep='\t|\t')
         print("-" * 80)
 
         for i in range(20):
@@ -34,10 +36,15 @@ class Arena:
             winsound.Beep(int(frequency), 100)     
 
             # Imprime el resultado de la jugada
-            print(str(i + 1) + '\t', jugada_bot1, jugada_bot2, puntos_bot1, puntos_bot2, sep='\t|\t')
+            print(str(i + 1) + '\t'
+                  , Arena.colorear(jugada_bot1) + " (" + str(puntos_bot1) + ")"
+                  , Arena.colorear(jugada_bot2) + " (" + str(puntos_bot2) + ")"
+                  , sep='\t|\t')
             
-            # Espera 0.2 segundos antes de la siguiente jugada
-            time.sleep(0.3)
+            if len(sys.argv) > 1 and sys.argv[1] == "fast":
+                continue
+            else:
+                time.sleep(0.6)
 
         print("")
         print(bot1.Nombre + ": " + str(puntaje_bot1)) 
@@ -45,3 +52,15 @@ class Arena:
         time.sleep(1)
 
         return puntaje_bot1, puntaje_bot2
+    
+    @staticmethod
+    def colorear(jugada: str) -> str:
+        # Imprime la jugada en color rojo si es una "M" o en color verde si es una "S"
+        
+        if jugada == "M":
+            return '\033[91m🦇\033[0m'  # Bat emoji in red color
+        elif jugada == "S":
+            return '\033[92m🐸\033[0m'  # Frog emoji in green color
+        else:
+            return jugada
+        
